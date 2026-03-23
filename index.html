@@ -462,30 +462,44 @@ canvas#c {
   /* Reduce core glow on mobile */
   #core-glow { width: 350px; height: 300px; }
 
-  /* Platform cards: horizontal but compact */
+  /* Platform cards: compact horizontal pills */
   #platforms {
-    bottom: 24px;
-    gap: 8px;
-    width: calc(100% - 32px);
+    bottom: 20px;
+    gap: 6px;
+    width: auto;
+    max-width: calc(100% - 24px);
     justify-content: center;
+    perspective: none;
   }
   .pcard {
-    padding: 14px 16px 12px;
-    flex: 1;
-    min-width: 0;
-    max-width: 120px;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    clip-path: none;
+    border-radius: 2px;
   }
-  .pcard-name { font-size: 12px; letter-spacing: 2px; }
-  .pcard-tag { font-size: 6px; letter-spacing: 1px; }
+  .pcard::after { display: none; }
+  .pcard-name { font-size: 10px; letter-spacing: 2px; }
+  .pcard-tag { display: none; }
+  .pcard-line { height: 1px; }
+  .pcard .shimmer { display: none; }
+
+  /* Disable 3D transforms on mobile cards */
+  .pcard[data-p="beatport"]:hover,
+  .pcard[data-p="soundcloud"]:hover,
+  .pcard[data-p="bandcamp"]:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
 
   /* Click hint */
   #click-hint {
-    bottom: 90px;
+    bottom: 72px;
     font-size: 7px; letter-spacing: 2px;
   }
 
   /* H-rules */
-  .h-rule.bottom { bottom: 96px; }
+  .h-rule.bottom { bottom: 74px; }
 
   /* Corner ticks smaller */
   .corner .tick { top: 6px; left: 6px; width: 12px; height: 12px; }
@@ -511,13 +525,12 @@ canvas#c {
   #logo-tagline { font-size: 6px; margin-top: 14px; }
   #platform-flash { height: 36px; margin-top: 10px; }
 
-  #platforms { bottom: 18px; gap: 6px; width: calc(100% - 20px); }
-  .pcard { padding: 12px 10px 10px; }
-  .pcard-name { font-size: 10px; letter-spacing: 1.5px; }
-  .pcard-tag { display: none; }
+  #platforms { bottom: 14px; gap: 4px; }
+  .pcard { padding: 7px 10px; }
+  .pcard-name { font-size: 8px; letter-spacing: 1.5px; }
 
   #click-hint { display: none; }
-  .h-rule.bottom { bottom: 82px; }
+  .h-rule.bottom { bottom: 60px; }
 }
 
 /* ═══════════════════════════════════════════════════════
