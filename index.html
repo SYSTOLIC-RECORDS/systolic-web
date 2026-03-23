@@ -2,303 +2,289 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>SYSTOLIC RECORDS — MADRID UNDERGROUND</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
---black: #040404;
---white: #f0ece4;
---red: #e8000d;
---red2: #ff2020;
---beatport: #01ff95;
---sc: #ff5500;
---bc: #1da0c3;
+  --black: #040404;
+  --white: #f0ece4;
+  --red: #e8000d;
+  --red2: #ff2020;
+  --beatport: #01ff95;
+  --sc: #ff5500;
+  --bc: #1da0c3;
 }
 html, body {
-width: 100%; height: 100%;
-background: var(--black);
-overflow: hidden;
-font-family: 'Space Mono', monospace;
-color: var(--white);
-cursor: crosshair;
-user-select: none;
+  width: 100%; height: 100%;
+  background: var(--black);
+  overflow: hidden;
+  font-family: 'Space Mono', monospace;
+  color: var(--white);
+  cursor: crosshair;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 canvas#c {
-position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
-display: block;
-will-change: transform;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+  will-change: transform;
 }
-/* ── NOISE GRAIN (static, no animation — much lighter) ── */
+
+/* ── NOISE GRAIN ── */
 #noise {
-position: fixed; inset: 0;
-opacity: 0.03;
-pointer-events: none;
-z-index: 52;
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23n)'/%3E%3C/svg%3E");
-background-size: 150px 150px;
+  position: fixed; inset: 0;
+  opacity: 0.03;
+  pointer-events: none; z-index: 52;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
 }
-/* ── SCANLINES (CSS only, no animation — saves compositing) ── */
+
+/* ── SCANLINES ── */
 #scanlines {
-position: fixed; inset: 0;
-background: repeating-linear-gradient(
-0deg, transparent, transparent 2px,
-rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px
-);
-pointer-events: none;
-z-index: 51;
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px);
+  pointer-events: none; z-index: 51;
 }
+
 /* ── VIGNETTE ── */
 #vignette {
-position: fixed; inset: 0;
-background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.96) 100%);
-pointer-events: none; z-index: 50;
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.96) 100%);
+  pointer-events: none; z-index: 50;
 }
+
 /* ── RED CORE GLOW ── */
 #core-glow {
-position: fixed; top: 50%; left: 50%;
-transform: translate(-50%, -50%);
-width: 700px; height: 500px;
-background: radial-gradient(ellipse at center,
-rgba(232,0,13,0.1) 0%,
-rgba(232,0,13,0.04) 40%,
-transparent 70%
-);
-pointer-events: none; z-index: 9;
-animation: corePulse 1.8s ease-in-out infinite alternate;
-will-change: opacity, transform;
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse at center, rgba(232,0,13,0.1) 0%, rgba(232,0,13,0.04) 40%, transparent 70%);
+  pointer-events: none; z-index: 9;
+  animation: corePulse 1.8s ease-in-out infinite alternate;
+  will-change: opacity, transform;
 }
 @keyframes corePulse {
-from { opacity: 0.6; transform: translate(-50%,-50%) scale(0.95); }
-to   { opacity: 1.0; transform: translate(-50%,-50%) scale(1.08); }
+  from { opacity: 0.6; transform: translate(-50%,-50%) scale(0.95); }
+  to   { opacity: 1.0; transform: translate(-50%,-50%) scale(1.08); }
 }
+
 /* ── HORIZONTAL RULES ── */
 .h-rule {
-position: fixed; left: 88px; right: 88px;
-height: 1px;
-background: linear-gradient(90deg,
-transparent 0%,
-rgba(232,0,13,0.15) 10%,
-rgba(232,0,13,0.55) 50%,
-rgba(232,0,13,0.15) 90%,
-transparent 100%
-);
-pointer-events: none; z-index: 58;
+  position: fixed;
+  left: var(--edge, 88px);
+  right: var(--edge, 88px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(232,0,13,0.15) 10%, rgba(232,0,13,0.55) 50%, rgba(232,0,13,0.15) 90%, transparent 100%);
+  pointer-events: none; z-index: 58;
 }
-.h-rule.top    { top: 84px; }
-.h-rule.bottom { bottom: 126px; }
+.h-rule.top    { top: var(--rule-top, 84px); }
+.h-rule.bottom { bottom: var(--rule-bottom, 126px); }
+
 /* ── CORNER BRACKETS ── */
 .corner {
-position: fixed; width: 64px; height: 64px;
-z-index: 60; pointer-events: none;
-filter: drop-shadow(0 0 8px rgba(232,0,13,0.85));
+  position: fixed;
+  width: var(--corner-size, 64px);
+  height: var(--corner-size, 64px);
+  z-index: 60; pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(232,0,13,0.85));
 }
 .corner::before, .corner::after { content: ''; position: absolute; background: var(--red); }
 .corner::before { width: 100%; height: 3px; top: 0; left: 0; }
 .corner::after  { width: 3px; height: 100%; top: 0; left: 0; }
 .corner .tick {
-position: absolute; top: 12px; left: 12px;
-width: 20px; height: 20px;
+  position: absolute; top: 12px; left: 12px;
+  width: 20px; height: 20px;
 }
 .corner .tick::before, .corner .tick::after { content: ''; position: absolute; background: rgba(232,0,13,0.35); }
 .corner .tick::before { width: 100%; height: 1px; top: 0; left: 0; }
 .corner .tick::after  { width: 1px; height: 100%; top: 0; left: 0; }
-.corner.tl { top: 16px; left: 16px; }
-.corner.tr { top: 16px; right: 16px; transform: scaleX(-1); }
-.corner.bl { bottom: 16px; left: 16px; transform: scaleY(-1); }
-.corner.br { bottom: 16px; right: 16px; transform: scale(-1); }
+.corner.tl { top: var(--corner-inset, 16px); left: var(--corner-inset, 16px); }
+.corner.tr { top: var(--corner-inset, 16px); right: var(--corner-inset, 16px); transform: scaleX(-1); }
+.corner.bl { bottom: var(--corner-inset, 16px); left: var(--corner-inset, 16px); transform: scaleY(-1); }
+.corner.br { bottom: var(--corner-inset, 16px); right: var(--corner-inset, 16px); transform: scale(-1); }
+
 /* ── NAV BAR ── */
 #nav {
-position: fixed; top: 0; left: 0; right: 0;
-display: flex; align-items: center; justify-content: space-between;
-padding: 24px 88px;
-z-index: 58; pointer-events: none;
-border-bottom: 1px solid rgba(232,0,13,0.08);
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px var(--edge, 88px);
+  z-index: 58; pointer-events: none;
+  border-bottom: 1px solid rgba(232,0,13,0.08);
 }
 .nav-txt {
-font-size: 8px; letter-spacing: 5px;
-color: rgba(240,236,228,0.2);
-text-transform: uppercase;
+  font-size: 8px; letter-spacing: 5px;
+  color: rgba(240,236,228,0.2);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 .nav-red {
-color: var(--red); font-weight: 700;
-text-shadow: 0 0 12px rgba(232,0,13,0.7);
+  color: var(--red); font-weight: 700;
+  text-shadow: 0 0 12px rgba(232,0,13,0.7);
 }
+
 /* ── CENTER LOGO ── */
 #center {
-position: fixed; top: 50%; left: 50%;
-transform: translate(-50%, -50%);
-text-align: center;
-z-index: 40; pointer-events: none;
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 40; pointer-events: none;
+  width: 90%;
 }
 #logo-text {
-font-family: 'Bebas Neue', sans-serif;
-font-size: clamp(72px, 11vw, 150px);
-letter-spacing: 22px;
-color: rgba(240,236,228,0.0);
-line-height: 1;
-animation: logoReveal 1.0s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-will-change: color, letter-spacing, filter;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 11vw, 150px);
+  letter-spacing: clamp(8px, 2.5vw, 22px);
+  color: rgba(240,236,228,0.0);
+  line-height: 1;
+  animation: logoReveal 1.0s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  will-change: color, letter-spacing, filter;
 }
 @keyframes logoReveal {
-0%   { color: rgba(240,236,228,0.0); letter-spacing: 55px; filter: blur(30px); }
-40%  { filter: blur(6px); }
-65%  { color: rgba(240,236,228,1); letter-spacing: 16px;
-text-shadow: 0 0 80px rgba(232,0,13,0.8), 0 0 3px #fff, 0 0 160px rgba(232,0,13,0.3);
-filter: blur(0); }
-80%  { letter-spacing: 26px; }
-100% { color: rgba(240,236,228,0.88); letter-spacing: 22px;
-text-shadow: 0 0 40px rgba(232,0,13,0.3), 0 0 1px rgba(255,255,255,0.6);
-filter: blur(0); }
+  0%   { color: rgba(240,236,228,0.0); letter-spacing: 55px; filter: blur(30px); }
+  40%  { filter: blur(6px); }
+  65%  { color: rgba(240,236,228,1); letter-spacing: 16px;
+         text-shadow: 0 0 80px rgba(232,0,13,0.8), 0 0 3px #fff, 0 0 160px rgba(232,0,13,0.3); filter: blur(0); }
+  80%  { letter-spacing: 26px; }
+  100% { color: rgba(240,236,228,0.88); letter-spacing: clamp(8px, 2.5vw, 22px);
+         text-shadow: 0 0 40px rgba(232,0,13,0.3), 0 0 1px rgba(255,255,255,0.6); filter: blur(0); }
 }
 #logo-sub {
-font-size: clamp(8px, 1vw, 11px);
-letter-spacing: 8px;
-color: var(--red);
-margin-top: 8px;
-opacity: 0;
-text-shadow: 0 0 18px rgba(232,0,13,0.6);
-animation: fadeUp 0.6s ease 1s forwards;
+  font-size: clamp(7px, 1vw, 11px);
+  letter-spacing: clamp(4px, 1vw, 8px);
+  color: var(--red); margin-top: 8px;
+  opacity: 0;
+  text-shadow: 0 0 18px rgba(232,0,13,0.6);
+  animation: fadeUp 0.6s ease 1s forwards;
 }
 #logo-tagline {
-font-size: 8px; letter-spacing: 3px;
-color: rgba(240,236,228,0.12);
-margin-top: 34px;
-opacity: 0;
-animation: fadeUp 0.6s ease 1.4s forwards;
+  font-size: 8px; letter-spacing: 3px;
+  color: rgba(240,236,228,0.12);
+  margin-top: 34px; opacity: 0;
+  animation: fadeUp 0.6s ease 1.4s forwards;
 }
 @keyframes fadeUp {
-from { opacity: 0; transform: translateY(10px); }
-to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
 /* ── PLATFORM NAME FLASH ── */
 #platform-flash {
-font-family: 'Bebas Neue', sans-serif;
-font-size: clamp(28px, 5vw, 62px);
-letter-spacing: 14px;
-margin-top: 22px;
-height: 68px;
-display: flex; align-items: center; justify-content: center;
-opacity: 0;
-transition: opacity 0.2s ease;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(24px, 5vw, 62px);
+  letter-spacing: clamp(6px, 1.5vw, 14px);
+  margin-top: 22px; height: 68px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s ease;
 }
+
 /* ── LEFT PANEL ── */
 #left-panel {
-position: fixed; left: 48px; top: 50%;
-transform: translateY(-50%);
-z-index: 58; pointer-events: none;
-opacity: 0;
-animation: fadeUp 0.6s ease 1.6s forwards;
+  position: fixed; left: 48px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 58; pointer-events: none;
+  opacity: 0; animation: fadeUp 0.6s ease 1.6s forwards;
 }
 .info-row {
-margin-bottom: 26px;
-padding-left: 14px;
-border-left: 2px solid rgba(232,0,13,0.5);
-position: relative;
+  margin-bottom: 26px; padding-left: 14px;
+  border-left: 2px solid rgba(232,0,13,0.5);
+  position: relative;
 }
 .info-row::before {
-content: '';
-position: absolute;
-left: -1px; top: 0;
-width: 2px; height: 100%;
-background: linear-gradient(180deg, rgba(232,0,13,0.8), rgba(232,0,13,0.2));
+  content: ''; position: absolute;
+  left: -1px; top: 0; width: 2px; height: 100%;
+  background: linear-gradient(180deg, rgba(232,0,13,0.8), rgba(232,0,13,0.2));
 }
 .info-label {
-font-size: 7px; letter-spacing: 4px;
-color: rgba(232,0,13,0.85); margin-bottom: 4px;
-text-transform: uppercase;
-text-shadow: 0 0 10px rgba(232,0,13,0.5);
+  font-size: 7px; letter-spacing: 4px;
+  color: rgba(232,0,13,0.85); margin-bottom: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(232,0,13,0.5);
 }
 .info-val {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 22px; letter-spacing: 2px;
-color: rgba(240,236,228,0.55);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 2px;
+  color: rgba(240,236,228,0.55);
 }
+
 /* ── RIGHT BPM ── */
 #right-panel {
-position: fixed; right: 48px; top: 50%;
-transform: translateY(-50%);
-z-index: 58; pointer-events: none;
-text-align: right;
-opacity: 0;
-animation: fadeUp 0.6s ease 1.6s forwards;
+  position: fixed; right: 48px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 58; pointer-events: none;
+  text-align: right;
+  opacity: 0; animation: fadeUp 0.6s ease 1.6s forwards;
 }
 #bpm-val {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 100px; line-height: 1;
-color: var(--red);
-position: relative;
-animation: bpmGlow 0.387s ease-in-out infinite alternate;
-will-change: text-shadow;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 100px; line-height: 1;
+  color: var(--red); position: relative;
+  animation: bpmGlow 0.387s ease-in-out infinite alternate;
+  will-change: text-shadow;
 }
 @keyframes bpmGlow {
-from { text-shadow: 0 0 20px rgba(232,0,13,0.5), 0 0 1px #fff; }
-to   { text-shadow: 0 0 70px rgba(232,0,13,1), 0 0 140px rgba(232,0,13,0.35), 0 0 3px #fff; }
+  from { text-shadow: 0 0 20px rgba(232,0,13,0.5), 0 0 1px #fff; }
+  to   { text-shadow: 0 0 70px rgba(232,0,13,1), 0 0 140px rgba(232,0,13,0.35), 0 0 3px #fff; }
 }
 #bpm-unit {
-font-size: 8px; letter-spacing: 5px;
-color: rgba(240,236,228,0.18);
-margin-top: 2px;
+  font-size: 8px; letter-spacing: 5px;
+  color: rgba(240,236,228,0.18); margin-top: 2px;
 }
 #bpm-bar {
-width: 90px; height: 3px;
-background: rgba(232,0,13,0.1);
-margin-top: 10px; margin-left: auto;
-overflow: hidden; position: relative;
+  width: 90px; height: 3px;
+  background: rgba(232,0,13,0.1);
+  margin-top: 10px; margin-left: auto;
+  overflow: hidden; position: relative;
 }
 #bpm-bar-fill {
-height: 100%;
-background: linear-gradient(90deg, #e8000d, #ff4040);
-box-shadow: 0 0 12px rgba(232,0,13,0.8);
-animation: bpmBarAnim 0.387s linear infinite alternate;
-will-change: width;
+  height: 100%;
+  background: linear-gradient(90deg, #e8000d, #ff4040);
+  box-shadow: 0 0 12px rgba(232,0,13,0.8);
+  animation: bpmBarAnim 0.387s linear infinite alternate;
+  will-change: width;
 }
-@keyframes bpmBarAnim {
-from { width: 20%; }
-to   { width: 100%; }
-}
+@keyframes bpmBarAnim { from { width: 20%; } to { width: 100%; } }
 #beat-dot {
-width: 7px; height: 7px;
-border-radius: 50%;
-background: var(--red);
-margin-left: auto; margin-top: 10px;
-box-shadow: 0 0 12px var(--red), 0 0 24px rgba(232,0,13,0.4);
-animation: beatPulse 0.387s ease-in-out infinite alternate;
-will-change: transform, opacity;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red);
+  margin-left: auto; margin-top: 10px;
+  box-shadow: 0 0 12px var(--red), 0 0 24px rgba(232,0,13,0.4);
+  animation: beatPulse 0.387s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 @keyframes beatPulse {
-from { transform: scale(0.35); opacity: 0.35; box-shadow: 0 0 4px var(--red); }
-to   { transform: scale(1.3); opacity: 1; box-shadow: 0 0 16px var(--red), 0 0 32px rgba(232,0,13,0.5); }
+  from { transform: scale(0.35); opacity: 0.35; box-shadow: 0 0 4px var(--red); }
+  to   { transform: scale(1.3); opacity: 1; box-shadow: 0 0 16px var(--red), 0 0 32px rgba(232,0,13,0.5); }
 }
-/* ── PLATFORM CARDS (NO backdrop-filter) ── */
+
+/* ── PLATFORM CARDS ── */
 #platforms {
-position: fixed; bottom: 38px; left: 50%;
-transform: translateX(-50%);
-display: flex; gap: 14px;
-z-index: 58; align-items: flex-end;
-perspective: 900px;
+  position: fixed; bottom: 38px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 14px;
+  z-index: 58; align-items: flex-end;
+  perspective: 900px;
 }
 .pcard {
-display: flex; flex-direction: column; align-items: center; gap: 10px;
-padding: 20px 26px 16px;
-border: 1px solid rgba(240,236,228,0.06);
-background: rgba(4,4,4,0.94);
-cursor: pointer; text-decoration: none; color: var(--white);
-position: relative; overflow: hidden;
-opacity: 0; transform: translateY(32px);
-transition: border-color 0.3s, background 0.3s, transform 0.35s cubic-bezier(0.23,1,0.32,1), box-shadow 0.3s;
-clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 26px 16px;
+  border: 1px solid rgba(240,236,228,0.06);
+  background: rgba(4,4,4,0.94);
+  cursor: pointer; text-decoration: none; color: var(--white);
+  position: relative; overflow: hidden;
+  opacity: 0; transform: translateY(32px);
+  transition: border-color 0.3s, background 0.3s, transform 0.35s cubic-bezier(0.23,1,0.32,1), box-shadow 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 .pcard::after {
-content: '';
-position: absolute; top: 0; right: 0;
-width: 0; height: 0;
-border-style: solid;
-border-width: 0 12px 12px 0;
-transition: border-color 0.3s;
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 0; height: 0; border-style: solid;
+  border-width: 0 12px 12px 0;
+  transition: border-color 0.3s;
 }
 .pcard[data-p="beatport"]::after   { border-color: transparent rgba(1,255,149,0.6)   transparent transparent; }
 .pcard[data-p="soundcloud"]::after { border-color: transparent rgba(255,85,0,0.6)    transparent transparent; }
@@ -307,131 +293,245 @@ transition: border-color 0.3s;
 .pcard:nth-child(2) { animation: slideUp 0.45s cubic-bezier(0.23,1,0.32,1) 1.75s forwards; }
 .pcard:nth-child(3) { animation: slideUp 0.45s cubic-bezier(0.23,1,0.32,1) 1.9s forwards; }
 @keyframes slideUp {
-from { opacity: 0; transform: translateY(32px) rotateX(18deg); }
-to   { opacity: 1; transform: translateY(0) rotateX(0deg); }
+  from { opacity: 0; transform: translateY(32px) rotateX(18deg); }
+  to   { opacity: 1; transform: translateY(0) rotateX(0deg); }
 }
 .pcard .shimmer {
-position: absolute; inset: 0;
-background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%);
-transform: translateX(-100%);
-transition: transform 0.6s ease;
-pointer-events: none; z-index: 1;
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  pointer-events: none; z-index: 1;
 }
 .pcard:hover .shimmer { transform: translateX(140%); }
 .pcard[data-p="beatport"]:hover {
-border-color: rgba(1,255,149,0.65);
-background: rgba(1,255,149,0.04);
-transform: translateY(-12px) rotateX(-4deg) scale(1.04);
-box-shadow: 0 0 50px rgba(1,255,149,0.25), 0 30px 60px rgba(0,0,0,0.7),
-inset 0 0 40px rgba(1,255,149,0.04);
+  border-color: rgba(1,255,149,0.65); background: rgba(1,255,149,0.04);
+  transform: translateY(-12px) rotateX(-4deg) scale(1.04);
+  box-shadow: 0 0 50px rgba(1,255,149,0.25), 0 30px 60px rgba(0,0,0,0.7), inset 0 0 40px rgba(1,255,149,0.04);
 }
 .pcard[data-p="soundcloud"]:hover {
-border-color: rgba(255,85,0,0.65);
-background: rgba(255,85,0,0.04);
-transform: translateY(-12px) rotateX(-4deg) scale(1.04);
-box-shadow: 0 0 50px rgba(255,85,0,0.28), 0 30px 60px rgba(0,0,0,0.7),
-inset 0 0 40px rgba(255,85,0,0.04);
+  border-color: rgba(255,85,0,0.65); background: rgba(255,85,0,0.04);
+  transform: translateY(-12px) rotateX(-4deg) scale(1.04);
+  box-shadow: 0 0 50px rgba(255,85,0,0.28), 0 30px 60px rgba(0,0,0,0.7), inset 0 0 40px rgba(255,85,0,0.04);
 }
 .pcard[data-p="bandcamp"]:hover {
-border-color: rgba(29,160,195,0.65);
-background: rgba(29,160,195,0.04);
-transform: translateY(-12px) rotateX(-4deg) scale(1.04);
-box-shadow: 0 0 50px rgba(29,160,195,0.25), 0 30px 60px rgba(0,0,0,0.7),
-inset 0 0 40px rgba(29,160,195,0.04);
+  border-color: rgba(29,160,195,0.65); background: rgba(29,160,195,0.04);
+  transform: translateY(-12px) rotateX(-4deg) scale(1.04);
+  box-shadow: 0 0 50px rgba(29,160,195,0.25), 0 30px 60px rgba(0,0,0,0.7), inset 0 0 40px rgba(29,160,195,0.04);
 }
 .pcard-name {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 16px; letter-spacing: 4px;
-position: relative; z-index: 2;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px; letter-spacing: 4px;
+  position: relative; z-index: 2;
 }
 .pcard-tag {
-font-size: 7px; letter-spacing: 2px;
-color: rgba(240,236,228,0.22);
-position: relative; z-index: 2;
+  font-size: 7px; letter-spacing: 2px;
+  color: rgba(240,236,228,0.22);
+  position: relative; z-index: 2;
 }
 .pcard-line {
-position: absolute; bottom: 0; left: 0;
-height: 2px; width: 0;
-transition: width 0.35s ease;
+  position: absolute; bottom: 0; left: 0;
+  height: 2px; width: 0; transition: width 0.35s ease;
 }
-.pcard[data-p="beatport"]  .pcard-line { background: var(--beatport); box-shadow: 0 0 10px var(--beatport); }
+.pcard[data-p="beatport"]   .pcard-line { background: var(--beatport); box-shadow: 0 0 10px var(--beatport); }
 .pcard[data-p="soundcloud"] .pcard-line { background: var(--sc); box-shadow: 0 0 10px var(--sc); }
-.pcard[data-p="bandcamp"]  .pcard-line { background: var(--bc); box-shadow: 0 0 10px var(--bc); }
+.pcard[data-p="bandcamp"]   .pcard-line { background: var(--bc); box-shadow: 0 0 10px var(--bc); }
 .pcard:hover .pcard-line { width: 100%; }
-/* ── CARD CLICK FEEDBACK ── */
 .pcard:active {
-transform: translateY(-2px) scale(0.96) !important;
-transition-duration: 0.08s !important;
+  transform: translateY(-2px) scale(0.96) !important;
+  transition-duration: 0.08s !important;
 }
-.pcard[data-p="beatport"]:active {
-box-shadow: 0 0 80px rgba(1,255,149,0.6), 0 0 160px rgba(1,255,149,0.2), inset 0 0 60px rgba(1,255,149,0.1) !important;
-border-color: rgba(1,255,149,1) !important;
-background: rgba(1,255,149,0.12) !important;
-}
-.pcard[data-p="soundcloud"]:active {
-box-shadow: 0 0 80px rgba(255,85,0,0.6), 0 0 160px rgba(255,85,0,0.2), inset 0 0 60px rgba(255,85,0,0.1) !important;
-border-color: rgba(255,85,0,1) !important;
-background: rgba(255,85,0,0.12) !important;
-}
-.pcard[data-p="bandcamp"]:active {
-box-shadow: 0 0 80px rgba(29,160,195,0.6), 0 0 160px rgba(29,160,195,0.2), inset 0 0 60px rgba(29,160,195,0.1) !important;
-border-color: rgba(29,160,195,1) !important;
-background: rgba(29,160,195,0.12) !important;
-}
-/* ── CLICK RIPPLE ── */
+.pcard[data-p="beatport"]:active { box-shadow: 0 0 80px rgba(1,255,149,0.6), inset 0 0 60px rgba(1,255,149,0.1) !important; border-color: rgba(1,255,149,1) !important; background: rgba(1,255,149,0.12) !important; }
+.pcard[data-p="soundcloud"]:active { box-shadow: 0 0 80px rgba(255,85,0,0.6), inset 0 0 60px rgba(255,85,0,0.1) !important; border-color: rgba(255,85,0,1) !important; background: rgba(255,85,0,0.12) !important; }
+.pcard[data-p="bandcamp"]:active { box-shadow: 0 0 80px rgba(29,160,195,0.6), inset 0 0 60px rgba(29,160,195,0.1) !important; border-color: rgba(29,160,195,1) !important; background: rgba(29,160,195,0.12) !important; }
+
+/* Click ripple */
 .pcard .click-ripple {
-position: absolute; inset: 0;
-pointer-events: none; z-index: 3;
-opacity: 0;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 3; opacity: 0;
 }
-.pcard .click-ripple.fire {
-animation: rippleBurst 0.5s ease-out forwards;
-}
-@keyframes rippleBurst {
-0%   { opacity: 1; transform: scale(0.3); }
-100% { opacity: 0; transform: scale(2.5); }
-}
+.pcard .click-ripple.fire { animation: rippleBurst 0.5s ease-out forwards; }
+@keyframes rippleBurst { 0% { opacity: 1; transform: scale(0.3); } 100% { opacity: 0; transform: scale(2.5); } }
+
 /* ── CLICK HINT ── */
 #click-hint {
-position: fixed; bottom: 152px; left: 50%;
-transform: translateX(-50%);
-font-size: 8px; letter-spacing: 4px;
-color: rgba(240,236,228,0.1);
-z-index: 58; pointer-events: none; white-space: nowrap;
-opacity: 0; animation: fadeUp 0.6s ease 2.2s forwards;
+  position: fixed; bottom: 152px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px; letter-spacing: 4px;
+  color: rgba(240,236,228,0.1);
+  z-index: 58; pointer-events: none; white-space: nowrap;
+  opacity: 0; animation: fadeUp 0.6s ease 2.2s forwards;
 }
+
 /* ── GLITCH ── */
 #glitch {
-position: fixed; inset: 0;
-pointer-events: none; z-index: 48;
-opacity: 0;
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 48; opacity: 0;
 }
 #glitch.active {
-opacity: 1;
-animation: glitchFlash 0.45s steps(4) 1;
+  opacity: 1; animation: glitchFlash 0.45s steps(4) 1;
 }
 @keyframes glitchFlash {
-0%  { background: rgba(232,0,13,0.22); clip-path: inset(4% 0 88% 0);  transform: translateX(-6px); }
-20% { background: rgba(0,200,255,0.07); clip-path: inset(72% 0 4% 0);  transform: translateX(8px); }
-40% { background: rgba(232,0,13,0.18); clip-path: inset(38% 0 44% 0); transform: translateX(-3px); }
-60% { background: rgba(1,255,149,0.05); clip-path: inset(15% 0 70% 0); transform: translateX(5px); }
-80% { background: rgba(232,0,13,0.12); clip-path: inset(85% 0 3% 0);  transform: translateX(-2px); }
-100%{ background: transparent; clip-path: none; transform: translateX(0); }
+  0%  { background: rgba(232,0,13,0.22); clip-path: inset(4% 0 88% 0);  transform: translateX(-6px); }
+  20% { background: rgba(0,200,255,0.07); clip-path: inset(72% 0 4% 0);  transform: translateX(8px); }
+  40% { background: rgba(232,0,13,0.18); clip-path: inset(38% 0 44% 0); transform: translateX(-3px); }
+  60% { background: rgba(1,255,149,0.05); clip-path: inset(15% 0 70% 0); transform: translateX(5px); }
+  80% { background: rgba(232,0,13,0.12); clip-path: inset(85% 0 3% 0);  transform: translateX(-2px); }
+  100%{ background: transparent; clip-path: none; transform: translateX(0); }
 }
+
 /* ── RGB SPLIT ── */
 #rgb-split {
-position: fixed; inset: 0;
-pointer-events: none; z-index: 47;
-opacity: 0; mix-blend-mode: screen;
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 47; opacity: 0; mix-blend-mode: screen;
 }
-#rgb-split.active {
-animation: rgbFlash 0.45s steps(4) 1;
-}
+#rgb-split.active { animation: rgbFlash 0.45s steps(4) 1; }
 @keyframes rgbFlash {
-0%  { opacity: 1; background: rgba(255,0,0,0.06); transform: translateX(-8px); }
-33% { opacity: 0.6; background: rgba(0,255,0,0.04); transform: translateX(8px); }
-66% { opacity: 0.8; background: rgba(0,0,255,0.05); transform: translateX(-4px); }
-100%{ opacity: 0; transform: translateX(0); }
+  0%  { opacity: 1; background: rgba(255,0,0,0.06); transform: translateX(-8px); }
+  33% { opacity: 0.6; background: rgba(0,255,0,0.04); transform: translateX(8px); }
+  66% { opacity: 0.8; background: rgba(0,0,255,0.05); transform: translateX(-4px); }
+  100%{ opacity: 0; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TABLET — max 900px
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  :root {
+    --edge: 40px;
+    --corner-size: 48px;
+    --corner-inset: 10px;
+    --rule-top: 64px;
+    --rule-bottom: 110px;
+  }
+  #nav { padding: 16px 40px; }
+  #left-panel { left: 20px; }
+  #left-panel .info-val { font-size: 16px; }
+  #right-panel { right: 20px; }
+  #bpm-val { font-size: 64px; }
+  #platforms { gap: 10px; }
+  .pcard { padding: 16px 20px 14px; }
+  .pcard-name { font-size: 14px; letter-spacing: 3px; }
+  .pcard-tag { font-size: 6px; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE — max 680px
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 680px) {
+  :root {
+    --edge: 16px;
+    --corner-size: 32px;
+    --corner-inset: 6px;
+    --rule-top: 52px;
+    --rule-bottom: 100px;
+  }
+
+  /* Hide side panels on mobile */
+  #left-panel { display: none; }
+  #right-panel { display: none; }
+
+  /* Nav: only show center brand */
+  #nav {
+    padding: 14px 16px;
+    justify-content: center;
+  }
+  .nav-txt:first-child,
+  .nav-txt:last-child { display: none; }
+
+  /* Logo adjustments */
+  #center { width: 95%; }
+  #logo-text {
+    font-size: clamp(40px, 14vw, 80px);
+    letter-spacing: clamp(6px, 3vw, 16px);
+  }
+  #logo-sub {
+    font-size: clamp(6px, 1.8vw, 9px);
+    letter-spacing: clamp(3px, 1vw, 6px);
+  }
+  #logo-tagline {
+    font-size: 7px; letter-spacing: 2px;
+    margin-top: 20px;
+  }
+  #platform-flash {
+    font-size: clamp(20px, 7vw, 40px);
+    letter-spacing: clamp(4px, 1.5vw, 10px);
+    height: 48px; margin-top: 14px;
+  }
+
+  /* Reduce core glow on mobile */
+  #core-glow { width: 350px; height: 300px; }
+
+  /* Platform cards: horizontal but compact */
+  #platforms {
+    bottom: 24px;
+    gap: 8px;
+    width: calc(100% - 32px);
+    justify-content: center;
+  }
+  .pcard {
+    padding: 14px 16px 12px;
+    flex: 1;
+    min-width: 0;
+    max-width: 120px;
+  }
+  .pcard-name { font-size: 12px; letter-spacing: 2px; }
+  .pcard-tag { font-size: 6px; letter-spacing: 1px; }
+
+  /* Click hint */
+  #click-hint {
+    bottom: 90px;
+    font-size: 7px; letter-spacing: 2px;
+  }
+
+  /* H-rules */
+  .h-rule.bottom { bottom: 96px; }
+
+  /* Corner ticks smaller */
+  .corner .tick { top: 6px; left: 6px; width: 12px; height: 12px; }
+  .corner::before { height: 2px; }
+  .corner::after { width: 2px; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SMALL MOBILE — max 400px
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+  :root {
+    --edge: 10px;
+    --corner-size: 24px;
+    --corner-inset: 4px;
+    --rule-top: 46px;
+    --rule-bottom: 92px;
+  }
+  #nav { padding: 10px 12px; }
+  .nav-txt { font-size: 7px; letter-spacing: 3px; }
+  #logo-text { font-size: clamp(36px, 16vw, 60px); }
+  #logo-sub { font-size: 6px; letter-spacing: 3px; }
+  #logo-tagline { font-size: 6px; margin-top: 14px; }
+  #platform-flash { height: 36px; margin-top: 10px; }
+
+  #platforms { bottom: 18px; gap: 6px; width: calc(100% - 20px); }
+  .pcard { padding: 12px 10px 10px; }
+  .pcard-name { font-size: 10px; letter-spacing: 1.5px; }
+  .pcard-tag { display: none; }
+
+  #click-hint { display: none; }
+  .h-rule.bottom { bottom: 82px; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LANDSCAPE MOBILE (short height)
+   ═══════════════════════════════════════════════════════ */
+@media (max-height: 500px) {
+  #left-panel { display: none; }
+  #right-panel { display: none; }
+  #logo-tagline { display: none; }
+  #platform-flash { display: none; }
+  #click-hint { display: none; }
+  #platforms { bottom: 10px; }
+  .h-rule.bottom { bottom: 70px; }
+  .corner { --corner-size: 28px; }
 }
 </style>
 </head>
@@ -443,71 +543,82 @@ animation: rgbFlash 0.45s steps(4) 1;
 <div id="core-glow"></div>
 <div id="glitch"></div>
 <div id="rgb-split"></div>
+
 <div class="corner tl"><div class="tick"></div></div>
 <div class="corner tr"><div class="tick"></div></div>
 <div class="corner bl"><div class="tick"></div></div>
 <div class="corner br"><div class="tick"></div></div>
 <div class="h-rule top"></div>
 <div class="h-rule bottom"></div>
+
 <div id="nav">
-<div class="nav-txt">MADRID · SPAIN</div>
-<div class="nav-txt"><span class="nav-red">SYSTOLIC</span> RECORDS</div>
-<div class="nav-txt">HARD TECHNO · SCHRANZ</div>
+  <div class="nav-txt">MADRID · SPAIN</div>
+  <div class="nav-txt"><span class="nav-red">SYSTOLIC</span> RECORDS</div>
+  <div class="nav-txt">HARD TECHNO · SCHRANZ</div>
 </div>
+
 <div id="center">
-<div id="logo-text">SYSTOLIC</div>
-<div id="logo-sub">RECORDS — MADRID UNDERGROUND</div>
-<div id="platform-flash"></div>
-<div id="logo-tagline">MOVE CURSOR · CLICK TO DETONATE · HOVER STORES</div>
+  <div id="logo-text">SYSTOLIC</div>
+  <div id="logo-sub">RECORDS — MADRID UNDERGROUND</div>
+  <div id="platform-flash"></div>
+  <div id="logo-tagline">TAP TO DETONATE · HOVER STORES</div>
 </div>
+
 <div id="left-panel">
-<div class="info-row">
-<div class="info-label">FOLLOWERS</div>
-<div class="info-val">11.7K SC</div>
+  <div class="info-row">
+    <div class="info-label">FOLLOWERS</div>
+    <div class="info-val">11.7K SC</div>
+  </div>
+  <div class="info-row">
+    <div class="info-label">FOUNDED</div>
+    <div class="info-val">MADRID 2020</div>
+  </div>
+  <div class="info-row">
+    <div class="info-label">GENRE</div>
+    <div class="info-val">SCHRANZ / HARD TECHNO</div>
+  </div>
 </div>
-<div class="info-row">
-<div class="info-label">FOUNDED</div>
-<div class="info-val">MADRID 2020</div>
-</div>
-<div class="info-row">
-<div class="info-label">GENRE</div>
-<div class="info-val">SCHRANZ / HARD TECHNO</div>
-</div>
-</div>
+
 <div id="right-panel">
-<div id="bpm-val">155</div>
-<div id="bpm-unit">BPM</div>
-<div id="bpm-bar"><div id="bpm-bar-fill"></div></div>
-<div id="beat-dot"></div>
+  <div id="bpm-val">155</div>
+  <div id="bpm-unit">BPM</div>
+  <div id="bpm-bar"><div id="bpm-bar-fill"></div></div>
+  <div id="beat-dot"></div>
 </div>
-<div id="click-hint">← HOVER PLATFORM TO MORPH · CLICK ANYWHERE TO EXPLODE →</div>
+
+<div id="click-hint">← HOVER PLATFORM TO MORPH · TAP ANYWHERE TO EXPLODE →</div>
+
 <div id="platforms">
-<a class="pcard" href="https://www.beatport.com/es/label/systolic-records/166207" target="_top" rel="noopener noreferrer" data-p="beatport">
-<div class="shimmer"></div>
-<div class="click-ripple"></div>
-<div class="pcard-name" style="color:#01ff95">BEATPORT</div>
-<div class="pcard-tag">BUY · EXCLUSIVE</div>
-<div class="pcard-line"></div>
-</a>
-<a class="pcard" href="https://soundcloud.com/sys-systolic" target="_top" rel="noopener noreferrer" data-p="soundcloud">
-<div class="shimmer"></div>
-<div class="click-ripple"></div>
-<div class="pcard-name" style="color:#ff5500">SOUNDCLOUD</div>
-<div class="pcard-tag">STREAM · FOLLOW</div>
-<div class="pcard-line"></div>
-</a>
-<a class="pcard" href="https://systolicsys.bandcamp.com/" target="_top" rel="noopener noreferrer" data-p="bandcamp">
-<div class="shimmer"></div>
-<div class="click-ripple"></div>
-<div class="pcard-name" style="color:#1da0c3">BANDCAMP</div>
-<div class="pcard-tag">BUY · SUPPORT</div>
-<div class="pcard-line"></div>
-</a>
+  <a class="pcard" href="https://www.beatport.com/es/label/systolic-records/166207" target="_top" rel="noopener noreferrer" data-p="beatport">
+    <div class="shimmer"></div>
+    <div class="click-ripple"></div>
+    <div class="pcard-name" style="color:#01ff95">BEATPORT</div>
+    <div class="pcard-tag">BUY · EXCLUSIVE</div>
+    <div class="pcard-line"></div>
+  </a>
+  <a class="pcard" href="https://soundcloud.com/sys-systolic" target="_top" rel="noopener noreferrer" data-p="soundcloud">
+    <div class="shimmer"></div>
+    <div class="click-ripple"></div>
+    <div class="pcard-name" style="color:#ff5500">SOUNDCLOUD</div>
+    <div class="pcard-tag">STREAM · FOLLOW</div>
+    <div class="pcard-line"></div>
+  </a>
+  <a class="pcard" href="https://systolicsys.bandcamp.com/" target="_top" rel="noopener noreferrer" data-p="bandcamp">
+    <div class="shimmer"></div>
+    <div class="click-ripple"></div>
+    <div class="pcard-name" style="color:#1da0c3">BANDCAMP</div>
+    <div class="pcard-tag">BUY · SUPPORT</div>
+    <div class="pcard-line"></div>
+  </a>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function () {
 'use strict';
+
+// ─── DETECT MOBILE ────────────────────────────────────────────────
+const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
 
 // ─── SVG LOGO PATH ────────────────────────────────────────────────
 const LOGO_PATH_D = "M201.232,107.638l-77.55,77.387l0.024-25.314l79.99-80.365v0.129l0.132-0.131l21.711,21.711v-52.69L177.174,0L112.77,64.406L48.366,0L0,48.365v52.609l21.711-21.711l0.132,0.131v-0.05l10.778,10.829l4.535,4.535l-0.011,0.011l64.718,65.022l-0.024,25.267l-77.573-77.409L8.822,123.042l103.947,103.727l103.908-103.687L201.232,107.638z M26.349,52.908l22.017-22.017l64.403,64.404l64.405-64.404l22.015,22.017l-86.42,86.827L26.349,52.908z";
@@ -531,12 +642,11 @@ function samplePath(pathD, count) {
   return pts;
 }
 
-// ─── RENDERER SETUP ───────────────────────────────────────────────
+// ─── RENDERER ─────────────────────────────────────────────────────
 const canvas = document.getElementById('c');
 const W = () => window.innerWidth;
 const H = () => window.innerHeight;
-// Cap pixel ratio at 1.5 to reduce GPU fill-rate
-const PR = Math.min(window.devicePixelRatio, 1.5);
+const PR = Math.min(window.devicePixelRatio, isMobile ? 1.0 : 1.5);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
 renderer.setPixelRatio(PR);
 renderer.setSize(W(), H());
@@ -548,7 +658,7 @@ const camera = new THREE.PerspectiveCamera(58, W() / H(), 0.1, 120);
 camera.position.set(0, 0.6, 8.0);
 camera.lookAt(0, 0, 0);
 
-// ─── CUSTOM PARTICLE SHADERS ──────────────────────────────────────
+// ─── SHADERS ──────────────────────────────────────────────────────
 const VERT = `
 attribute float size;
 attribute vec3 color;
@@ -579,8 +689,8 @@ void main() {
   gl_FragColor = vec4(vColor, alpha * vOpacity);
 }`;
 
-// ─── PARTICLE ARRAYS (reduced from 5500 → 2500) ──────────────────
-const N    = 2500;
+// ─── PARTICLES (reduced on mobile) ───────────────────────────────
+const N    = isMobile ? 1200 : 2500;
 const pos  = new Float32Array(N * 3);
 const orig = new Float32Array(N * 3);
 const expl = new Float32Array(N * 3);
@@ -590,10 +700,10 @@ const bpTgt = new Float32Array(N * 3);
 const scTgt = new Float32Array(N * 3);
 const bcTgt = new Float32Array(N * 3);
 
-// ─── BUILD LOGO FORMATION ────────────────────────────────────────
+// ─── BUILD LOGO ──────────────────────────────────────────────────
 const rawPts = samplePath(LOGO_PATH_D, N);
 const SVG_W = 225.539, SVG_H = 226.769;
-const SCALE = 5.3 / Math.max(SVG_W, SVG_H);
+const SCALE = (isMobile ? 4.0 : 5.3) / Math.max(SVG_W, SVG_H);
 
 for (let i = 0; i < N; i++) {
   const sx = rawPts[i * 2], sy = rawPts[i * 2 + 1];
@@ -625,24 +735,16 @@ for (let i = 0; i < N; i++) {
   } else {
     col[i*3] = 0.25 + Math.random()*0.15; col[i*3+1] = 0; col[i*3+2] = 0;
   }
-  // Slightly larger particles to compensate for fewer count
-  sz[i] = 1.1 + Math.random() * 4.0;
+  sz[i] = isMobile ? (1.4 + Math.random() * 4.5) : (1.1 + Math.random() * 4.0);
 }
 
-// ─── BUILD PLATFORM SHAPES ────────────────────────────────────────
+// ─── PLATFORM SHAPES ─────────────────────────────────────────────
 for (let i = 0; i < N; i++) {
   const t = i / N;
   let x, y, z = (Math.random() - 0.5) * 0.2;
-  if (t < 0.35) {
-    x = -0.82 + (Math.random()-0.5)*0.1;
-    y =  2.3 - (t / 0.35) * 4.6;
-  } else if (t < 0.50) {
-    const tt = (t - 0.35) / 0.15;
-    x = -0.82 + tt * 0.58; y = -2.3 + tt * 0.85;
-  } else {
-    const a = ((t - 0.5) / 0.5) * Math.PI * 2;
-    x = 0.22 + Math.cos(a) * 1.12; y = -0.72 + Math.sin(a) * 1.06;
-  }
+  if (t < 0.35) { x = -0.82 + (Math.random()-0.5)*0.1; y = 2.3 - (t / 0.35) * 4.6; }
+  else if (t < 0.50) { const tt = (t - 0.35) / 0.15; x = -0.82 + tt * 0.58; y = -2.3 + tt * 0.85; }
+  else { const a = ((t - 0.5) / 0.5) * Math.PI * 2; x = 0.22 + Math.cos(a) * 1.12; y = -0.72 + Math.sin(a) * 1.06; }
   bpTgt[i*3] = x; bpTgt[i*3+1] = y; bpTgt[i*3+2] = z;
 }
 
@@ -653,17 +755,15 @@ for (let i = 0; i < N; i++) {
     const bx = -2.9 + b * (5.8 / (BARS - 1));
     const bh = 0.35 + Math.abs(Math.sin(b * 0.88 + 0.4)) * 2.3;
     for (let j = 0; j < perB && idx < N; j++, idx++) {
-      scTgt[idx*3]   = bx + (Math.random()-0.5)*0.11;
+      scTgt[idx*3] = bx + (Math.random()-0.5)*0.11;
       scTgt[idx*3+1] = -bh/2 + (j/perB) * bh;
       scTgt[idx*3+2] = (Math.random()-0.5)*0.22;
     }
   }
   while (idx < N) {
-    const a  = Math.random() * Math.PI;
-    const rx = 0.95 + Math.random()*0.12;
-    const ry = 0.65 + Math.random()*0.10;
-    scTgt[idx*3]   = 1.7  + Math.cos(a) * rx;
-    scTgt[idx*3+1] = 1.55 + Math.sin(a) * ry;
+    const a = Math.random() * Math.PI;
+    scTgt[idx*3] = 1.7 + Math.cos(a) * (0.95 + Math.random()*0.12);
+    scTgt[idx*3+1] = 1.55 + Math.sin(a) * (0.65 + Math.random()*0.10);
     scTgt[idx*3+2] = (Math.random()-0.5)*0.22;
     idx++;
   }
@@ -672,13 +772,12 @@ for (let i = 0; i < N; i++) {
 for (let i = 0; i < N; i++) {
   const u = Math.random(), v = Math.random();
   const su = Math.sqrt(u);
-  const a = 1 - su, b2 = su*(1-v), c = su*v;
-  bcTgt[i*3]   = a*(-3.1) + b2*(3.1) + c*(0)   + (Math.random()-0.5)*0.06;
-  bcTgt[i*3+1] = a*(-2.0) + b2*(-2.0) + c*(2.7) + (Math.random()-0.5)*0.06;
+  bcTgt[i*3]   = (1-su)*(-3.1) + su*(1-v)*(3.1) + su*v*(0) + (Math.random()-0.5)*0.06;
+  bcTgt[i*3+1] = (1-su)*(-2.0) + su*(1-v)*(-2.0) + su*v*(2.7) + (Math.random()-0.5)*0.06;
   bcTgt[i*3+2] = (Math.random()-0.5)*0.22;
 }
 
-// ─── MAIN GEOMETRY ────────────────────────────────────────────────
+// ─── GEOMETRY ────────────────────────────────────────────────────
 const geo = new THREE.BufferGeometry();
 geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
 geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
@@ -692,29 +791,20 @@ const mat = new THREE.ShaderMaterial({
 const particles = new THREE.Points(geo, mat);
 scene.add(particles);
 
-// ─── AMBIENT DUST (reduced from 700 → 300) ───────────────────────
-const AMB_N  = 300;
+// ─── AMBIENT DUST (reduced on mobile) ────────────────────────────
+const AMB_N  = isMobile ? 120 : 300;
 const ambPos = new Float32Array(AMB_N * 3);
 const ambCol = new Float32Array(AMB_N * 3);
 const ambSz  = new Float32Array(AMB_N);
 const ambVel = new Float32Array(AMB_N * 3);
 
 for (let i = 0; i < AMB_N; i++) {
-  ambPos[i*3]   = (Math.random()-0.5) * 26;
-  ambPos[i*3+1] = (Math.random()-0.5) * 16;
-  ambPos[i*3+2] = -3 + (Math.random()-0.5) * 10;
+  ambPos[i*3] = (Math.random()-0.5)*26; ambPos[i*3+1] = (Math.random()-0.5)*16; ambPos[i*3+2] = -3 + (Math.random()-0.5)*10;
   const rnd = Math.random();
-  if (rnd < 0.65) {
-    const v = 0.3 + Math.random()*0.35;
-    ambCol[i*3] = v; ambCol[i*3+1] = 0; ambCol[i*3+2] = 0;
-  } else {
-    const v = 0.08 + Math.random()*0.12;
-    ambCol[i*3] = v; ambCol[i*3+1] = v; ambCol[i*3+2] = v;
-  }
-  ambSz[i] = 0.5 + Math.random() * 1.5;
-  ambVel[i*3]   = (Math.random()-0.5) * 0.0018;
-  ambVel[i*3+1] = 0.0008 + Math.random() * 0.0025;
-  ambVel[i*3+2] = (Math.random()-0.5) * 0.0008;
+  if (rnd < 0.65) { const v = 0.3+Math.random()*0.35; ambCol[i*3]=v; ambCol[i*3+1]=0; ambCol[i*3+2]=0; }
+  else { const v = 0.08+Math.random()*0.12; ambCol[i*3]=v; ambCol[i*3+1]=v; ambCol[i*3+2]=v; }
+  ambSz[i] = isMobile ? (0.8 + Math.random()*2.0) : (0.5 + Math.random()*1.5);
+  ambVel[i*3] = (Math.random()-0.5)*0.0018; ambVel[i*3+1] = 0.0008+Math.random()*0.0025; ambVel[i*3+2] = (Math.random()-0.5)*0.0008;
 }
 const ambGeo = new THREE.BufferGeometry();
 ambGeo.setAttribute('position', new THREE.BufferAttribute(ambPos, 3));
@@ -727,8 +817,8 @@ const ambMat = new THREE.ShaderMaterial({
 });
 scene.add(new THREE.Points(ambGeo, ambMat));
 
-// ─── GRID FLOOR ───────────────────────────────────────────────────
-const GRID_SIZE = 50, GRID_DIV = 24;
+// ─── GRID ─────────────────────────────────────────────────────────
+const GRID_SIZE = 50, GRID_DIV = isMobile ? 16 : 24;
 const grid = new THREE.GridHelper(GRID_SIZE, GRID_DIV, 0x3d0000, 0x1a0000);
 grid.position.set(0, -5.5, -10);
 const applyGridMat = (m) => { m.transparent = true; m.opacity = 0.45; };
@@ -736,16 +826,17 @@ if (Array.isArray(grid.material)) grid.material.forEach(applyGridMat);
 else applyGridMat(grid.material);
 scene.add(grid);
 
-// ─── VERTICAL LIGHT PILLARS ───────────────────────────────────────
+// ─── PILLARS ──────────────────────────────────────────────────────
 [-5, -2.5, 0, 2.5, 5].forEach(x => {
   const pts = [new THREE.Vector3(x, -6, -15), new THREE.Vector3(x, 8, -15)];
-  const g = new THREE.BufferGeometry().setFromPoints(pts);
-  const m = new THREE.LineBasicMaterial({ color: 0x330000, transparent: true, opacity: 0.08 });
-  scene.add(new THREE.Line(g, m));
+  scene.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color: 0x330000, transparent: true, opacity: 0.08 })
+  ));
 });
 
-// ─── SHOCKWAVE RING (single ring, fewer segments) ─────────────────
-const ringSegs = 64;
+// ─── SHOCKWAVE RING ───────────────────────────────────────────────
+const ringSegs = isMobile ? 32 : 64;
 const ringVerts = new Float32Array((ringSegs + 1) * 3);
 for (let i = 0; i <= ringSegs; i++) {
   const a = (i / ringSegs) * Math.PI * 2;
@@ -773,20 +864,46 @@ const platTargets = {
   bandcamp:   { arr: bcTgt, color: '#1da0c3', bpm: 155 },
 };
 
-// ─── MOUSE ────────────────────────────────────────────────────────
+// ─── MOUSE + TOUCH ────────────────────────────────────────────────
 const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+
 document.addEventListener('mousemove', e => {
   mouse.tx = (e.clientX / W()) * 2 - 1;
   mouse.ty = -(e.clientY / H()) * 2 + 1;
 }, { passive: true });
 
+// Touch support: gyroscope-like movement via touch drag
+document.addEventListener('touchmove', e => {
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    mouse.tx = (t.clientX / W()) * 2 - 1;
+    mouse.ty = -(t.clientY / H()) * 2 + 1;
+  }
+}, { passive: true });
+
+document.addEventListener('touchend', () => {
+  // Slowly drift back to center
+  mouse.tx *= 0.5;
+  mouse.ty *= 0.5;
+}, { passive: true });
+
 // ─── INTERACTIONS ─────────────────────────────────────────────────
-document.addEventListener('click', e => {
+function handleTap(e) {
   if (e.target.closest('.pcard')) return;
   if (state === STATES.LOGO || state === STATES.PLATFORM || state === STATES.MORPHING) {
     triggerExplosion();
   }
-});
+}
+document.addEventListener('click', handleTap);
+document.addEventListener('touchstart', e => {
+  if (e.target.closest('.pcard')) return;
+  // Update touch position for explosion origin
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    mouse.tx = (t.clientX / W()) * 2 - 1;
+    mouse.ty = -(t.clientY / H()) * 2 + 1;
+  }
+}, { passive: true });
 
 document.querySelectorAll('.pcard').forEach(card => {
   const ripple = card.querySelector('.click-ripple');
@@ -797,13 +914,11 @@ document.querySelectorAll('.pcard').forEach(card => {
   };
 
   card.addEventListener('click', () => {
-    // fire ripple
     if (ripple) {
       ripple.style.background = `radial-gradient(circle, ${colors[card.dataset.p] || 'rgba(255,255,255,0.2)'} 0%, transparent 70%)`;
       ripple.classList.remove('fire'); void ripple.offsetWidth; ripple.classList.add('fire');
       setTimeout(() => ripple.classList.remove('fire'), 500);
     }
-    // fire glitch
     const g = document.getElementById('glitch');
     const rgb = document.getElementById('rgb-split');
     g.classList.remove('active'); void g.offsetWidth; g.classList.add('active');
@@ -878,7 +993,6 @@ function hideFlash() { flashEl.style.opacity = '0'; }
 let bpmTarget = 155, bpmCurrent = 155;
 const bpmEl = document.getElementById('bpm-val');
 let bpmDisplayFrame = 0;
-
 setInterval(() => {
   if (state === STATES.LOGO || state === STATES.REFORMING)
     bpmTarget = 153 + Math.round(Math.random() * 7);
@@ -888,67 +1002,62 @@ setInterval(() => {
 const clock = new THREE.Clock();
 let time = 0;
 let camX = 0, camY = 0.6;
+const skipFrames = isMobile ? 1 : 0; // On mobile, update dust every other frame
+let frameCount = 0;
 
 function tick() {
   requestAnimationFrame(tick);
   const dt = Math.min(clock.getDelta(), 0.05);
   time += dt;
+  frameCount++;
 
-  // smooth mouse
   mouse.x += (mouse.tx - mouse.x) * 0.052;
   mouse.y += (mouse.ty - mouse.y) * 0.052;
 
-  // smooth BPM (update DOM every 4th frame)
   bpmCurrent += (bpmTarget - bpmCurrent) * 0.028;
-  if (++bpmDisplayFrame >= 4) {
+  if (++bpmDisplayFrame >= (isMobile ? 6 : 4)) {
     bpmEl.textContent = Math.round(bpmCurrent);
     bpmDisplayFrame = 0;
   }
 
-  // beat cycle
   const beatHz = bpmCurrent / 60.0;
   const beat = Math.sin(time * beatHz * Math.PI * 2);
   mat.uniforms.uPulse.value = 1.0 + beat * 0.09 + (state === STATES.EXPLODING ? 0.12 : 0);
 
-  // camera parallax
   camX += (mouse.x * 0.55 - camX) * 0.04;
   camY += (0.6 + mouse.y * 0.35 - camY) * 0.04;
   camera.position.set(camX, camY, 8.0);
   camera.lookAt(0, 0, 0);
 
-  // particle group tilt
   particles.rotation.y = mouse.x * 0.32 + Math.sin(time * 0.14) * 0.03;
   particles.rotation.x = -mouse.y * 0.10 + Math.cos(time * 0.10) * 0.018;
 
-  // ambient dust drift
-  const ap = ambGeo.attributes.position.array;
-  for (let i = 0; i < AMB_N; i++) {
-    const i3 = i * 3;
-    ap[i3]   += ambVel[i3];
-    ap[i3+1] += ambVel[i3+1];
-    ap[i3+2] += ambVel[i3+2];
-    if (ap[i3+1] > 9)  { ap[i3+1] = -9; ap[i3] = (Math.random()-0.5)*26; }
-    if (ap[i3] > 14)   ap[i3] = -14;
-    if (ap[i3] < -14)  ap[i3] = 14;
+  // Ambient dust (skip frames on mobile)
+  if (frameCount % (skipFrames + 1) === 0) {
+    const ap = ambGeo.attributes.position.array;
+    for (let i = 0; i < AMB_N; i++) {
+      const i3 = i * 3;
+      ap[i3] += ambVel[i3]; ap[i3+1] += ambVel[i3+1]; ap[i3+2] += ambVel[i3+2];
+      if (ap[i3+1] > 9) { ap[i3+1] = -9; ap[i3] = (Math.random()-0.5)*26; }
+      if (ap[i3] > 14) ap[i3] = -14;
+      if (ap[i3] < -14) ap[i3] = 14;
+    }
+    ambGeo.attributes.position.needsUpdate = true;
   }
-  ambGeo.attributes.position.needsUpdate = true;
 
-  // grid drift
+  // Grid drift
   const cellZ = GRID_SIZE / GRID_DIV;
   grid.position.z = -10 + (time * 1.2) % cellZ;
 
-  // shockwave ring
+  // Shockwave ring
   if (ringActive) {
     ringScale += dt * 8;
     ring.scale.set(ringScale, ringScale, 1);
     ringMat.opacity = Math.max(0, 0.9 - ringScale * 0.13);
-    if (ringScale > 8) {
-      ringActive = false;
-      ring.scale.set(0, 0, 1); ringMat.opacity = 0;
-    }
+    if (ringScale > 8) { ringActive = false; ring.scale.set(0, 0, 1); ringMat.opacity = 0; }
   }
 
-  // ── particle state updates ──
+  // ── Particle states ──
   const p = pos;
   if (state === STATES.LOGO) {
     const mx = mouse.x * 2.9, my = mouse.y * 2.3;
@@ -959,7 +1068,7 @@ function tick() {
       const dx = ox - mx, dy = oy - my;
       const d2 = dx*dx + dy*dy;
       const push = Math.max(0, 1 - d2/2.8) * 0.34;
-      p[i3]   = ox + dx*push + breatheX;
+      p[i3] = ox + dx*push + breatheX;
       p[i3+1] = oy + dy*push + breatheY;
       p[i3+2] = oz + breatheZ;
     }
@@ -970,7 +1079,7 @@ function tick() {
     const spd = dt * 4.2;
     for (let i = 0; i < N; i++) {
       const i3 = i * 3;
-      p[i3]   += (tgt[i3]   - p[i3])   * spd;
+      p[i3] += (tgt[i3] - p[i3]) * spd;
       p[i3+1] += (tgt[i3+1] - p[i3+1]) * spd;
       p[i3+2] += (tgt[i3+2] - p[i3+2]) * spd;
     }
@@ -981,7 +1090,7 @@ function tick() {
     for (let i = 0; i < N; i++) {
       const i3 = i * 3;
       const w = Math.sin(time * 3.2 + i * 0.0035) * 0.015;
-      p[i3]   += (tArr[i3]   - p[i3])   * 0.11 + w;
+      p[i3] += (tArr[i3] - p[i3]) * 0.11 + w;
       p[i3+1] += (tArr[i3+1] - p[i3+1]) * 0.11 + w*0.55;
       p[i3+2] += (tArr[i3+2] - p[i3+2]) * 0.11;
     }
@@ -991,9 +1100,8 @@ function tick() {
     const spdX = dt * 3.2, spdY = dt * 2.8, spdZ = dt * 2.4;
     for (let i = 0; i < N; i++) {
       const i3 = i * 3;
-      const ty = expl[i3+1] - explodeT * 0.7;
-      p[i3]   += (expl[i3]   - p[i3])   * spdX;
-      p[i3+1] += (ty          - p[i3+1]) * spdY;
+      p[i3] += (expl[i3] - p[i3]) * spdX;
+      p[i3+1] += (expl[i3+1] - explodeT*0.7 - p[i3+1]) * spdY;
       p[i3+2] += (expl[i3+2] - p[i3+2]) * spdZ;
     }
     if (explodeT >= 1) {
@@ -1006,7 +1114,7 @@ function tick() {
     for (let i = 0; i < N; i++) {
       const i3 = i * 3;
       const spd = 0.055 + (sz[i]-1) * 0.012;
-      p[i3]   += (orig[i3]   - p[i3])   * spd;
+      p[i3] += (orig[i3] - p[i3]) * spd;
       p[i3+1] += (orig[i3+1] - p[i3+1]) * spd;
       p[i3+2] += (orig[i3+2] - p[i3+2]) * spd;
     }
@@ -1018,7 +1126,7 @@ function tick() {
 }
 tick();
 
-// ─── RESIZE (debounced) ───────────────────────────────────────────
+// ─── RESIZE ───────────────────────────────────────────────────────
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
